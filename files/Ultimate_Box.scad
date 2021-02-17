@@ -42,7 +42,7 @@ in order to have the appropriate flexibility.
 // preview[view:north east, tilt:top diagonal]
 //----------------------- Box parameters ---------------------------
 
-/* [Box options] */
+/* [Rack floor options] */
 // - Wall thickness
 Thick = 2;
 // - Panel thickness
@@ -50,7 +50,7 @@ PanelThick = 2;
 // - Font Thickness
 FontThick = 0.5;
 // - Filet Radius
-Filet = 2;
+UserSettedFilet = 2;
 // - 0 for beveled, 1 for rounded
 Round = 1; // [0:No, 1:Yes]
 // - Printer margin around interior cutouts
@@ -71,21 +71,14 @@ PanelVerticalGap = PartMargin;
 PanelHorizontalGap = CutoutMargin + PartMargin;
 
 
-/* [Box Fixation Tabs] */
+/* [Rack Fixation Tabs] */
 // - Side screw hole (or snap) diameter
 ScrewHole = 2.2606;
 // - Screw thread major diameter for outer shell
 BoxHole = 2.8448;
 // Thickness of fixation tabs
 TabThick = 2;
-// Back left tab
-BLTab = 1; // [0:Bottom, 1:Top]
-// Back right tab
-BRTab = 1; // [0:Bottom, 1:Top]
-// Front left tab
-FLTab = 1; // [0:Bottom, 1:Top]
-// Front right tab
-FRTab = 1; // [0:Bottom, 1:Top]
+
 // EXPERIMENTAL: Snap tabs
 SnapTabs = 0; // [0:Screws, 1:Snaps]
 
@@ -147,19 +140,32 @@ Foot4Y = PCBWidth - Foot4YFromEdge;
 
 
 /* [STL element to export] */
+// - Part type
+Part = 1; // [1:Bottom floor, 2:Middle floor, 3:Top floor, 4:Cover]
+
+/* [Hidden] */
+
+BShell = (Part == 1 || Part == 2) ? 1 : 0;
+Filet = (Part == 2) ? 0 : UserSettedFilet;
+
 // - Top shell
 TShell = 0; // [0:No, 1:Yes]
-// - Bottom shell
-BShell = 1; // [0:No, 1:Yes]
 // - Front panel
-FPanL = 1; // [0:No, 1:Yes]
+FPanL = 0; // [0:No, 1:Yes]
 // - Back panel
-BPanL = 1; // [0:No, 1:Yes]
+BPanL = 0; // [0:No, 1:Yes]
 // - Panel holes and text
 PanelFeatures = 0; // [0:No, 1:Yes]
 
+// Back left tab
+BLTab = 0; // [0:Bottom, 1:Top]
+// Back right tab
+BRTab = 0; // [0:Bottom, 1:Top]
+// Front left tab
+FLTab = 0; // [0:Bottom, 1:Top]
+// Front right tab
+FRTab = 0; // [0:Bottom, 1:Top]
 
-/* [Hidden] */
 // - Shell color
 Couleur1 = "Orange";
 // - Panel color
@@ -188,8 +194,10 @@ Resolution = Round ? 100: 4;
 */
 Length = PCBLength + FrontEdgeMargin + BackEdgeMargin + ((Thick + PanelThick + PanelThickGap*2)*2);
 Width = PCBWidth + LeftEdgeMargin + RightEdgeMargin + Thick*2;
-Height = FootHeight + PCBThick + TopMargin + Thick*2;
-echo("Box: ", Length=Length, Width=Width, Height=Height);
+
+HeightFloor = 2*(FootHeight + PCBThick + TopMargin + Thick);
+Height = (Part == 1 || Part == 2) ? HeightFloor : (FootHeight + PCBThick + TopMargin + Thick*2);
+echo("Box: ", Length=Length, Width=Width, Height=Height, HeightFloor=HeightFloor, Part=Part);
 // X position inset of mounting holes and tabs
 MountInset = Thick*3 + PanelThick + PanelThickGap*2 + ScrewHole*4;
 
