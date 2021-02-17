@@ -205,6 +205,8 @@ MountInset = Thick*3 + PanelThick + PanelThickGap*2 + ScrewHole*4;
 // Calculate panel dimensions from box dimensions.
 PanelWidth = Width - Thick*2 - PanelHorizontalGap*2;
 PanelHeight = Height - Thick*2 - PanelVerticalGap*2;
+TabRadius = 4*ScrewHole;
+TabHeightOverFloor = TabRadius*sqrt(3)/2;
 
 
 /*  Panel Manager
@@ -352,8 +354,8 @@ module MainBox() {
 /*  decoration: a single box decoration
 */
 module decoration() {
-    translate([-Vent_width/2, -Thick, -Thick]) {
-        cube([Vent_width, Dec_Thick + Thick, Height/4 + Thick]);
+    translate([-Vent_width/2, -Thick, TabHeightOverFloor]) {
+        cube([Vent_width, Dec_Thick + Thick, Height/2-TabHeightOverFloor*2]);
     }
 }
 
@@ -418,7 +420,7 @@ module tab() {
             difference() {
                 linear_extrude(TabThick) {
                     difference() {
-                        circle(r=4*ScrewHole, $fn=6);
+                        circle(r=TabRadius, $fn=6);
                         if (!SnapTabs) {
                             translate([0, ScrewHole*2, 0]) {
                                 circle(d=ScrewHole, $fn=100);
