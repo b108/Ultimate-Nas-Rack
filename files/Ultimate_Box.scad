@@ -126,6 +126,9 @@ FootHole = 2.2606; // tap size for #4 coarse-thread
 Screwless = 0; // [0:Screws, 1:Screwless]
 FootFilet = FootHeight/4;
 
+// Through hole
+FootThroughHole = 0; // [0:No, 1:Yes]
+
 // Foot centers are specified as distance from PCB back-left corner.
 // X is along the "length" axis, and Y is along the "width" axis.
 // - Foot 1 distance from back PCB edge
@@ -646,27 +649,32 @@ module foot(top=0) {
 
     No arguments are used, but parameters provide the PCB and foot dimensions.
 */
-module Feet(top=0) {
+
+module positionFeet(pcbShow=0, top=0) {
     translate([BackEdgeMargin + Thick + PanelThick + PanelThickGap*2, LeftEdgeMargin + Thick, Thick]) {
-        if (!top) {
+        if (pcbShow) {
             %PCB();
         }
 
         if (Screwless || !top ) {
             translate([Foot1X, Foot1Y]) {
-                foot(top=top);
+                children();
             }
             translate([Foot2X, Foot2Y]) {
-                foot(top=top);
+                children();
                 }
             translate([Foot3X, Foot3Y]) {
-                foot(top=top);
+                children();
                 }
             translate([Foot4X, Foot4Y]) {
-                foot(top=top);
+                children();
             }
         }
     }
+}
+
+module Feet(top=0) {
+    positionFeet(top=top, pcbShow=!top) foot(top=top);
 }
 
 
@@ -710,6 +718,11 @@ module BottomShell() {
         Holes();
         if (Part == 2) {
             translate([0, 0, -HeightOriginal+Thick]) Tabs();
+        }
+
+        if ((Part == 1 || Part == 2) && FootThroughHole) {
+            echo(Thick);
+            positionFeet() { translate([0, 0, -Thick-Thick/2]) cylinder(d=FootHole, h = Thick*2, $fn=Resolution); }
         }
     }
 }
