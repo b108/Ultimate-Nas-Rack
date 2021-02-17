@@ -65,6 +65,9 @@ Decorations = 1; // [0:No, 1:Yes]
 Vent = 1; // [0:No, 1:Yes]
 // - Decoration-Holes width (in mm)
 Vent_width = 1.5;
+
+// - Decoration/Ventilation length as percentage (0-100)
+Dec_Length_As_Percentage = 25;
 // - Tolerance (Panel/rails gap on one edge)
 PanelThickGap = CutoutMargin + PartMargin;
 PanelVerticalGap = PartMargin;
@@ -366,7 +369,7 @@ module decoration() {
     These can be rotated and translated for the right side.
 */
 module LeftDecorations() {
-    for (i=[0 : Dec_Spacing : Length/4]) {
+    for (i=[0 : Dec_Spacing : (Length-Dec_Offset*2)*Dec_Length_As_Percentage/100/2]) {
         translate([Dec_Offset + i, 0, 0]) {
             decoration();
         }
