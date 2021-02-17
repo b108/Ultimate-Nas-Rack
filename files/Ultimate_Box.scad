@@ -196,7 +196,8 @@ Length = PCBLength + FrontEdgeMargin + BackEdgeMargin + ((Thick + PanelThick + P
 Width = PCBWidth + LeftEdgeMargin + RightEdgeMargin + Thick*2;
 
 HeightFloor = 2*(FootHeight + PCBThick + TopMargin + Thick);
-Height = (Part == 1 || Part == 2) ? HeightFloor : (FootHeight + PCBThick + TopMargin + Thick*2);
+HeightOriginal = FootHeight + PCBThick + TopMargin + Thick*2;
+Height = (Part == 1 || Part == 2) ? HeightFloor : HeightOriginal;
 echo("Box: ", Length=Length, Width=Width, Height=Height, HeightFloor=HeightFloor, Part=Part);
 // X position inset of mounting holes and tabs
 MountInset = Thick*3 + PanelThick + PanelThickGap*2 + ScrewHole*4;
@@ -694,6 +695,9 @@ module BottomShell() {
             }
         }
         Holes();
+        if (Part == 2) {
+            translate([0, 0, -HeightOriginal+Thick]) Tabs();
+        }
     }
 }
 
