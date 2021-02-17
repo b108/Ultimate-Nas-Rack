@@ -43,6 +43,9 @@ in order to have the appropriate flexibility.
 //----------------------- Box parameters ---------------------------
 
 /* [Rack floor options] */
+// - Part type
+Part = 1; // [1:Bottom floor, 2:Middle floor, 3:Top floor, 4:Cover]
+
 // - Inner space length (should be same for all floors)
 Inner_Space_Length = 186;
 
@@ -151,11 +154,6 @@ Foot4X = PCBLength - Foot4XFromEdge;
 // - Foot 4 distance from right PCB edge
 Foot4YFromEdge = 5;
 Foot4Y = PCBWidth - Foot4YFromEdge;
-
-
-/* [STL element to export] */
-// - Part type
-Part = 1; // [1:Bottom floor, 2:Middle floor, 3:Top floor, 4:Cover]
 
 /* [Hidden] */
 
@@ -716,12 +714,13 @@ module BottomShell() {
             }
         }
         Holes();
+
         if (Part == 2) {
-            translate([0, 0, -HeightOriginal+Thick]) Tabs();
+            # translate([0, 0, -HeightOriginal+Thick]) Tabs();
+            translate([0, 0, -HeightOriginal+Thick+ScrewHole*4]) Holes(top=1);
         }
 
         if ((Part == 1 || Part == 2) && FootThroughHole) {
-            echo(Thick);
             positionFeet() { translate([0, 0, -Thick-Thick/2]) cylinder(d=FootHole, h = Thick*2, $fn=Resolution); }
         }
     }
