@@ -43,6 +43,12 @@ in order to have the appropriate flexibility.
 //----------------------- Box parameters ---------------------------
 
 /* [Rack floor options] */
+// - Inner space length (should be same for all floors)
+Inner_Space_Length = 186;
+
+// - Inner space width (should be same for all floors)
+Inner_Space_Width = 113;
+
 // - Wall thickness
 Thick = 2;
 // - Panel thickness
@@ -88,24 +94,26 @@ SnapTabs = 0; // [0:Screws, 1:Snaps]
 
 /* [PCB options] */
 // - PCB Length
-PCBLength = 80;
+PCBLength = 146;
 // - PCB Width
-PCBWidth = 144;
+PCBWidth = 103;
 // - PCB Thickness
-PCBThick = 1.6;
+PCBThick = 25;
 // You likely need to maintain |TabThick| margin on the left and right for tabs
 // and whatnot.
 // - Margin between front panel and PCB
-FrontEdgeMargin = 70;
-// - Margin between back panel and PCB
-BackEdgeMargin = 0;
-// - Margin between left wall and PCB
-LeftEdgeMargin = 11;
-// - Margin between right wall and PCB
-RightEdgeMargin = 11;
-// - Margin between top of PCB and box top.
-TopMargin = 84;
+FrontEdgeMarginUserSetted = -40;
 
+// - Margin between left wall and PCB
+LeftEdgeMargin = 5;
+// - Margin between top of PCB and box top.
+TopMargin = 5;
+
+FrontEdgeMargin = (FrontEdgeMarginUserSetted >= 0) ? FrontEdgeMarginUserSetted : Inner_Space_Length +  FrontEdgeMarginUserSetted - PCBLength;
+
+BackEdgeMargin = (FrontEdgeMarginUserSetted >= 0) ? (Inner_Space_Length - PCBLength - FrontEdgeMarginUserSetted) : -FrontEdgeMarginUserSetted;
+
+RightEdgeMargin = Inner_Space_Width - PCBWidth - LeftEdgeMargin;
 
 /* [PCB_Feet] */
 // - Foot height above box interior
@@ -567,7 +575,7 @@ module PCB() {
         translate([PCBLength/2, PCBWidth/2, PCBThick]) {
             color("Olive") {
                 linear_extrude(height=FontThick) {
-                    text("PCB", font="Arial black", halign="center", valign="center");
+                    text("PCB / HDD", font="Arial black", halign="center", valign="center");
                 }
             }
         }
