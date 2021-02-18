@@ -638,16 +638,6 @@ module foot(top=0) {
     }
 }
 
-
-/*  Feet module
-
-    Combines four feet to form mounting platform for PCB.
-    A model of the PCB is included with the background modifier. It is
-    translucent but visible in the preview, but not in the final render.
-
-    No arguments are used, but parameters provide the PCB and foot dimensions.
-*/
-
 module positionFeet(pcbShow=0, top=0) {
     translate([BackEdgeMargin + Thick + PanelThick + PanelThickGap*2, LeftEdgeMargin + Thick, Thick]) {
         if (pcbShow) {
@@ -670,6 +660,15 @@ module positionFeet(pcbShow=0, top=0) {
         }
     }
 }
+
+/*  Feet module
+
+    Combines four feet to form mounting platform for PCB.
+    A model of the PCB is included with the background modifier. It is
+    translucent but visible in the preview, but not in the final render.
+
+    No arguments are used, but parameters provide the PCB and foot dimensions.
+*/
 
 module Feet(top=0) {
     positionFeet(top=top, pcbShow=!top) foot(top=top);
