@@ -68,6 +68,8 @@ CutoutMargin = 0.3;
 PartMargin = 0.1;
 // - PCB feet? (x4)
 PCBFeet = 1; // [0:No, 1:Yes]
+// - Under PCB Hole
+UnderPCBHole = 0;  // [0:No, 1:Yes]
 // - Decorations?
 Decorations = 1; // [0:No, 1:Yes]
 // - Decorations to ventilation holes
@@ -583,6 +585,7 @@ module PCB() {
     }
 }
 
+FootBottomRadius = (FootDia - FootHole)/2 - CutoutMargin + FootFilet;
 
 /*  foot module
 
@@ -601,7 +604,7 @@ module foot(top=0) {
                     }
                     else if (!Screwless && !top) { // Foot with screw hole
                         translate([FootHole/2 + CutoutMargin, 0, 0]) {
-                            square([(FootDia - FootHole)/2 - CutoutMargin + FootFilet, FootHeight]);
+                            square([FootBottomRadius, FootHeight]);
                         }
                     }
                 }
@@ -646,18 +649,25 @@ module positionFeet(pcbShow=0, top=0) {
 
         if (Screwless || !top ) {
             translate([Foot1X, Foot1Y]) {
-                children();
+                rotate([0, 0, 45]) children();
             }
             translate([Foot2X, Foot2Y]) {
-                children();
-                }
+                rotate([0, 0, -45]) children();
+            }
             translate([Foot3X, Foot3Y]) {
-                children();
-                }
+                rotate([0, 0, 180-45])  children();
+            }
             translate([Foot4X, Foot4Y]) {
-                children();
+                rotate([0, 0, 180+45])  children();
             }
         }
+    }
+}
+
+module underPCBHole() {
+    d=5;
+    hull() positionFeet() {
+        translate([FootBottomRadius+d, 0, -Thick-1]) cylinder(d=d, h=Thick+2, $fn=Resolution);
     }
 }
 
@@ -721,6 +731,10 @@ module BottomShell() {
 
         if ((Part == 1 || Part == 2) && FootThroughHole) {
             positionFeet() { translate([0, 0, -Thick-Thick/2]) cylinder(d=FootHole, h = Thick*2, $fn=Resolution); }
+        }
+
+        if (UnderPCBHole) {
+            underPCBHole();
         }
     }
 }
