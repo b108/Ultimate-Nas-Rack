@@ -56,8 +56,6 @@ Inner_Space_Width = 113;
 Thick = 2;
 // - Panel thickness
 PanelThick = 2;
-// - Font Thickness
-FontThick = 0.5;
 // - Filet Radius
 UserSettedFilet = 2;
 // - 0 for beveled, 1 for rounded
@@ -179,6 +177,9 @@ BRTab = 0; // [0:Bottom, 1:Top]
 FLTab = 0; // [0:Bottom, 1:Top]
 // Front right tab
 FRTab = 0; // [0:Bottom, 1:Top]
+
+// - Font Thickness
+FontThick = 0.5;
 
 // - Shell color
 Couleur1 = "Orange";
@@ -667,6 +668,7 @@ module positionFeet(pcbShow=0, top=0) {
 module underPCBHole() {
     d=5;
     hull() positionFeet() {
+        // TODO FIX
         translate([FootBottomRadius+d, 0, -Thick-1]) cylinder(d=d, h=Thick+2, $fn=Resolution);
     }
 }
