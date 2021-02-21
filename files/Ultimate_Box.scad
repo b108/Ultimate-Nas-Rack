@@ -135,24 +135,24 @@ FootThroughHole = 0; // [0:No, 1:Yes]
 // Foot centers are specified as distance from PCB back-left corner.
 // X is along the "length" axis, and Y is along the "width" axis.
 // - Foot 1 distance from back PCB edge
-Foot1X = 5;
+Foot1X = 5.0;
 // - Foot 1 distance from left PCB edge
-Foot1Y = 5;
+Foot1Y = 5.0;
 // - Foot 2 distance from back PCB edge
-Foot2X = 5;
+Foot2X = 5.0;
 // - Foot 2 distance from right PCB edge
-Foot2YFromEdge = 5;
+Foot2YFromEdge = 5.1;
 Foot2Y = PCBWidth - Foot2YFromEdge;
 // - Foot 3 distance from front PCB edge
-Foot3XFromEdge = 5;
+Foot3XFromEdge = 5.1;
 Foot3X = PCBLength - Foot3XFromEdge;
 // - Foot 3 distance from left PCB edge
-Foot3Y = 5;
+Foot3Y = 5.0;
 // - Foot 4 distance from front PCB edge
-Foot4XFromEdge = 5;
+Foot4XFromEdge = 5.1;
 Foot4X = PCBLength - Foot4XFromEdge;
 // - Foot 4 distance from right PCB edge
-Foot4YFromEdge = 5;
+Foot4YFromEdge = 5.1;
 Foot4Y = PCBWidth - Foot4YFromEdge;
 
 /* [Hidden] */
@@ -180,6 +180,8 @@ FRTab = 0; // [0:Bottom, 1:Top]
 
 // - Font Thickness
 FontThick = 0.5;
+
+TabMargin = PartMargin;
 
 // - Shell color
 Couleur1 = "Orange";
@@ -429,13 +431,14 @@ module Coque() {
 
     Produces a single box fixation tab with screw hole or snap button
 */
-module tab() {
+module tab(forCut=0) {
+    k = forCut ? 1 + TabMargin/(TabRadius*sqrt(3)/2) :  1;
     translate([0, Thick, Height/2]) {
         rotate([90, 0, 180]) {
             difference() {
                 linear_extrude(TabThick) {
                     difference() {
-                        circle(r=TabRadius, $fn=6);
+                        scale([k, k, 1]) circle(r=TabRadius, $fn=6);
                         if (!SnapTabs) {
                             translate([0, ScrewHole*2, 0]) {
                                 circle(d=ScrewHole, $fn=100);
@@ -448,8 +451,11 @@ module tab() {
                         cube([8*ScrewHole, 3*ScrewHole, 5*ScrewHole]);
                     }
                 }
-                translate([-4*ScrewHole, 0, -PartMargin]) {
-                    cube([8*ScrewHole,4*ScrewHole,PartMargin*2]);
+
+                if (!forCut) {
+                    translate([-4*ScrewHole, 0, -PartMargin]) {
+                        cube([8*ScrewHole,4*ScrewHole,PartMargin*2]);
+                    }
                 }
             }
             if (SnapTabs) {
@@ -476,29 +482,29 @@ module tab() {
     Arguments:
         top: 0 for bottom shell tabs. 1 for top shell tabs. defaults to bottom.
 */
-module Tabs(top=0) {
+module Tabs(top=0, forCut=0) {
     color(Couleur1) {
         if (BLTab == top) {
             translate([MountInset, 0, 0]) {
-                tab();
+                tab(forCut=forCut);
             }
         }
         if (FLTab == top) {
             translate([Length - MountInset, 0, 0]) {
-                tab();
+                tab(forCut=forCut);
             }
         }
         if (BRTab == top) {
             translate([MountInset, Width, 0]) {
                 rotate([0, 0, 180]) {
-                    tab();
+                    tab(forCut=forCut);
                 }
             }
         }
         if (FRTab == top) {
             translate([Length - MountInset, Width, 0]) {
                 rotate([0, 0, 180]) {
-                    tab();
+                    tab(forCut=forCut);
                 }
             }
         }
@@ -727,7 +733,8 @@ module BottomShell() {
         Holes();
 
         if (Part == 2) {
-            # translate([0, 0, -HeightOriginal+Thick]) Tabs();
+            translate([0, 0, -HeightOriginal+Thick]) Tabs(forCut=1);
+            % color("red", 0.2) translate([0, 0, -HeightOriginal+Thick]) Tabs(forCut=0);
             translate([0, 0, -HeightOriginal+Thick+ScrewHole*4]) Holes(top=1);
         }
 
