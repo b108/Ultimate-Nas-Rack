@@ -53,7 +53,7 @@ Inner_Space_Length = 186;
 Inner_Space_Width = 113;
 
 // - Wall thickness
-Thick = 2;
+Thick = 2.4;
 // - Panel thickness
 PanelThick = 2;
 // - Filet Radius
@@ -135,24 +135,24 @@ FootThroughHole = 0; // [0:No, 1:Yes]
 // Foot centers are specified as distance from PCB back-left corner.
 // X is along the "length" axis, and Y is along the "width" axis.
 // - Foot 1 distance from back PCB edge
-Foot1X = 5.0;
+Foot1X = 5.0; // [0:0.1:100]
 // - Foot 1 distance from left PCB edge
-Foot1Y = 5.0;
+Foot1Y = 5.0; // [0:0.1:100]
 // - Foot 2 distance from back PCB edge
-Foot2X = 5.0;
+Foot2X = 5.0; // [0:0.1:100]
 // - Foot 2 distance from right PCB edge
-Foot2YFromEdge = 5.1;
+Foot2YFromEdge = 5.0; // [0:0.1:100]
 Foot2Y = PCBWidth - Foot2YFromEdge;
 // - Foot 3 distance from front PCB edge
-Foot3XFromEdge = 5.1;
+Foot3XFromEdge = 5.0; // [0:0.1:100]
 Foot3X = PCBLength - Foot3XFromEdge;
 // - Foot 3 distance from left PCB edge
-Foot3Y = 5.0;
+Foot3Y = 5.0; // [0:0.1:100]
 // - Foot 4 distance from front PCB edge
-Foot4XFromEdge = 5.1;
+Foot4XFromEdge = 5.0; // [0:0.1:100]
 Foot4X = PCBLength - Foot4XFromEdge;
 // - Foot 4 distance from right PCB edge
-Foot4YFromEdge = 5.1;
+Foot4YFromEdge = 5.0; // [0:0.1:100]
 Foot4Y = PCBWidth - Foot4YFromEdge;
 
 /* [Hidden] */
