@@ -94,6 +94,8 @@ TabThick = 2;
 // EXPERIMENTAL: Snap tabs
 SnapTabs = 0; // [0:Screws, 1:Snaps]
 
+// Tab margin
+TabMargin = 0.5;
 
 /* [PCB options] */
 // - PCB Length
@@ -198,8 +200,6 @@ FRTab = 0; // [0:Bottom, 1:Top]
 
 // - Font Thickness
 FontThick = 0.5;
-
-TabMargin = PartMargin;
 
 // - Shell color
 Couleur1 = "Orange";
@@ -451,10 +451,11 @@ module Coque() {
 */
 module tab(forCut=0) {
     k = forCut ? 1 + TabMargin/(TabRadius*sqrt(3)/2) :  1;
+    yk = forCut ? 1 + TabMargin/TabThick : 1;
     translate([0, Thick, Height/2]) {
         rotate([90, 0, 180]) {
             difference() {
-                linear_extrude(TabThick*k) {
+                linear_extrude(TabThick*yk) {
                     difference() {
                         scale([k, k, 1]) circle(r=TabRadius, $fn=6);
                         if (!SnapTabs) {
