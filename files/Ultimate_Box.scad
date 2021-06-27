@@ -155,6 +155,24 @@ Foot4X = PCBLength - Foot4XFromEdge;
 Foot4YFromEdge = 5.0; // [0:0.1:100]
 Foot4Y = PCBWidth - Foot4YFromEdge;
 
+/* [Holes] */
+// Hole type
+Hole1Type = 0; // [0:None, 1:Square, 2:Hex]
+// Hole corner X
+Hole1X1 = 0; // [0:0.1:200]
+// Hole corner Y
+Hole1Y1 = 0; // [0:0.1:200]
+// Hole length
+Hole1Length = 0; // [0:0.1:200]
+// Hole width
+Hole1Width = 0; // [0:0.1:200]
+// Hole cell size
+Hole1CellSize = 10; // [0:0.1:200]
+// Hole cell size
+Hole1CellSpace = 2; // [0:0.1:20]
+// Cell rotation angle
+HoleCellRotationAngle = 0; // [0:360]
+
 /* [Hidden] */
 
 BShell = (Part == 1 || Part == 2) ? 1 : 0;
@@ -436,7 +454,7 @@ module tab(forCut=0) {
     translate([0, Thick, Height/2]) {
         rotate([90, 0, 180]) {
             difference() {
-                linear_extrude(TabThick) {
+                linear_extrude(TabThick*k) {
                     difference() {
                         scale([k, k, 1]) circle(r=TabRadius, $fn=6);
                         if (!SnapTabs) {
@@ -449,12 +467,6 @@ module tab(forCut=0) {
                 translate([-4*ScrewHole, -ScrewHole, TabThick]) {
                     rotate([90+45, 0, 0]) {
                         cube([8*ScrewHole, 3*ScrewHole, 5*ScrewHole]);
-                    }
-                }
-
-                if (!forCut) {
-                    translate([-4*ScrewHole, 0, -PartMargin]) {
-                        cube([8*ScrewHole,4*ScrewHole,PartMargin*2]);
                     }
                 }
             }
@@ -734,7 +746,7 @@ module BottomShell() {
 
         if (Part == 2) {
             translate([0, 0, -HeightOriginal+Thick]) Tabs(forCut=1);
-            % color("red", 0.2) translate([0, 0, -HeightOriginal+Thick]) Tabs(forCut=0);
+            % color("red", 0.7) translate([0, 0, -HeightOriginal+Thick]) Tabs(forCut=0);
             translate([0, 0, -HeightOriginal+Thick+ScrewHole*4]) Holes(top=1);
         }
 
@@ -943,7 +955,10 @@ if (TShell) {
 
 // Bottom shell
 if (BShell) {
-    BottomShell();
+    difference() {
+        BottomShell();
+        MakeVentilation(Hole1Type, Hole1X1, Hole1Y1, Hole1Length, Hole1Width, Hole1CellSize, Hole1CellSpace, HoleCellRotationAngle);
+    }
 }
 
 // Front panel
@@ -954,4 +969,36 @@ if (FPanL) {
 // Back panel
 if (BPanL) {
     BPanL();
+}
+
+module MakeVentilation(HoleType, HoleX1, HoleY1, XLen, YLen, CellSize, CellSpace, CellRotationAngle=0) {
+    maxSize = sqrt(2) * max(XLen+CellSize, YLen+CellSize);
+
+    if (HoleType == 1) { // "Square"
+        translate([HoleX1, HoleY1, -5]) intersection() {
+            rotate([0, 0, CellRotationAngle]) union() {
+            for(x = [-maxSize:CellSize+CellSpace:maxSize]) {
+                for(y = [-maxSize:CellSize+CellSpace:maxSize]) {
+                    translate([x, y, 0]) cube([CellSize, CellSize, Height+10]);
+            }
+            }
+            }
+
+            translate([0, 0, 0]) cube([XLen, YLen, Height+10]);
+        }
+    }
+}
+
+module mirrorX() {
+    mirror([1, 0, 0]) children();
+    children();
+}
+
+module mirrorY() {
+    mirror([0, 1, 0]) children();
+    children();
+}
+
+module mirrorXY() {
+    mirrorX() mirrorY() children();
 }
